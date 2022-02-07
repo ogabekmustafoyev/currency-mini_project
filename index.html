@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Currency</title>
+    <style>
+      .list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <select class="currency">
+      <option value="usd">AQSH Dollari</option>
+      <option value="eur">Yeuro</option>
+      <option value="rub">Rubl</option>
+    </select>
+    <div class="list">
+      <ul>
+        <li class="sarlavha"></li>
+        <li class="sana"></li>
+        <li class="kurs"></li>
+      </ul>
+    </div>
+
+    <script>
+      const data = new Date();
+      let yil = data.getFullYear(),
+        oy = data.getMonth() + 1,
+        kun = data.getDate();
+
+      document.querySelector(".currency").addEventListener("change", (e) => {
+        let val = e.target.value;
+
+        let httpSorov = new XMLHttpRequest();
+
+        httpSorov.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            let natija = JSON.parse(this.responseText);
+
+            document.querySelector(".sarlavha").innerHTML = natija[0].CcyNm_UZ;
+            document.querySelector(".sana").innerHTML = natija[0].Date;
+            document.querySelector(".kurs").innerHTML = natija[0].Rate;
+          }
+        };
+        httpSorov.open(
+          "GET",
+          `https://cbu.uz/uz/arkhiv-kursov-valyut/json/${val}/${yil}-${oy}-${kun}/`,
+          true
+        );
+
+        httpSorov.send();
+      });
+    </script>
+  </body>
+</html>
